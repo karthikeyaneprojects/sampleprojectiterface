@@ -1,242 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Examination Attendance</title>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #ffffff;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examination Attendance</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-    /* Top info bar */
-    .top-info-bar {
-      background-color: #F0941C;
-      color: white;
-      padding: 8px 20px;
-      font-size: 14px;
-    }
-    .top-info-bar a {
-      color: white;
-      text-decoration: none;
-      margin-left: 10px;
-    }
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+  }
 
-    /* Navbar */
-    .navbar {
-      background-color: #0E2A66;
-      display: flex;
-      align-items: center;
-      padding: 10px 20px;
-    }
-    .navbar .logo {
-      width: 120px;
-      margin-right: 20px;
+  /* Top info bar */
+  .top-info-bar {
+    background-color: #F0941C;
+    color: white;
+    padding: 8px 20px;
+    font-size: 14px;
+    text-align: center;
+  }
+  .top-info-bar a {
+    color: white;
+    text-decoration: none;
+    margin-left: 10px;
+  }
+
+  /* Navbar */
+  .navbar {
+    background-color: #0E2A66;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    overflow-x: auto;
+  }
+  .navbar .logo {
+    width: 100px;
+    margin-right: 20px;
+    flex-shrink: 0;
+  }
+  .navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+    flex-wrap: nowrap;
+  }
+  .navbar ul li {
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    position: relative;
+    white-space: nowrap;
+  }
+  .navbar ul li:hover { color: #F0941C; }
+  .navbar ul li::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    background-color: #F0941C;
+    left: 0;
+    bottom: -5px;
+    transition: width 0.3s ease;
+  }
+  .navbar ul li:hover::after { width: 100%; }
+
+  /* Banner */
+  .header-banner {
+    background-image: url(./skacas.jpeg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    text-align: center;
+    padding: 60px 20px;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    letter-spacing: 1.05px;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+  }
+
+  /* Container base */
+  .container {
+    background: #fff;
+    margin: 40px auto;
+    padding: 30px 24px 32px 24px;
+    border-radius: 14px;
+    box-shadow: 0 8px 36px rgba(45, 50, 80, 0.16);
+    width: 98%;
+    max-width: 480px;
+    animation: fadein 0.8s;
+  }
+  @keyframes fadein {
+    from { opacity: 0; transform: translateY(24px);}
+    to { opacity: 1; transform: translateY(0);}
+  }
+
+  /* Themed login box */
+  .login {
+    background-color: #0E2A66;
+    color: white;
+    text-align: center;
+  }
+  .login h2 {
+    color: white;
+    margin-bottom: 18px;
+  }
+  .login input[type="text"],
+  .login input[type="password"] {
+    padding: 10px 12px;
+    border: 1.5px solid #F0941C;
+    border-radius: 5px;
+    font-size: 15px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .login input:focus {
+    outline: none;
+    border-color: #ffc366;
+    box-shadow: 0 0 4px rgba(240,148,28,0.6);
+  }
+  .login .btn {
+    background-color: #F0941C;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .login .btn:hover {
+    background-color: #d77f13;
+    transform: scale(1.05);
+  }
+
+  /* Attendance styles */
+  h3 {
+    text-align: center;
+    margin-bottom: 18px;
+    color: #3246ca;
+    letter-spacing: 1px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+  }
+  input[type="file"] {
+    outline: none;
+    border-radius: 4px;
+    border: 1px dashed #90b4ef;
+    background: #f6faff;
+    color: #3246ca;
+    margin: 0 auto 14px auto;
+    display: block;
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+  .table-responsive {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fcfdff;
+    box-shadow: 0 1px 4px rgba(140,160,255,0.06);
+    border-radius: 8px;
+    margin: 20px 0;
+    animation: fadein 1s;
+    overflow: hidden;
+    min-width: 500px;
+  }
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #e4eefe;
+  }
+  th {
+    background: #eef5ff;
+    color: #4250aa;
+    font-size: 15px;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+  tr:hover { background: #e8f6ff60; }
+  .checkbox {
+    accent-color: #5a6efb;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  /* Mobile responsive adjustments */
+  @media (max-width: 600px) {
+    .header-banner {
+      font-size: 20px;
+      padding: 40px 15px;
     }
     .navbar ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      gap: 15px;
-    }
-    .navbar ul li {
-      color: white;
-      cursor: pointer;
-      font-weight: 600;
-      position: relative;
-    }
-    .navbar ul li:hover { color: #F0941C; }
-    .navbar ul li::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 3px;
-      background-color: #F0941C;
-      left: 0;
-      bottom: -5px;
-      transition: width 0.3s ease;
-    }
-    .navbar ul li:hover::after { width: 100%; }
-
-    /* Banner */
-    .header-banner {
-      background-image: url(./skacas.jpeg);
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      text-align: center;
-      padding: 60px 20px;
-      color: white;
-      font-size: 30px;
-      font-weight: bold;
-      letter-spacing: 1.05px;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
-    }
-
-    /* Container base */
-    .container {
-      background: #fff;
-      margin: 40px auto;
-      padding: 30px 24px 32px 24px;
-      border-radius: 14px;
-      box-shadow: 0 8px 36px rgba(45, 50, 80, 0.16);
-      width: 98%;
-      max-width: 480px;
-      animation: fadein 0.8s;
-    }
-    @keyframes fadein {
-      from { opacity: 0; transform: translateY(24px);}
-      to { opacity: 1; transform: translateY(0);}
-    }
-
-    /* Themed login box */
-    .login {
-      background-color: #0E2A66;
-      color: white;
-      text-align: center;
-    }
-    .login h2 {
-      color: white;
-      margin-bottom: 18px;
-    }
-    .login input[type="text"],
-    .login input[type="password"] {
-      padding: 10px 12px;
-      border: 1.5px solid #F0941C;
-      border-radius: 5px;
-      font-size: 15px;
-      width: 100%;
-    }
-    .login input:focus {
-      outline: none;
-      border-color: #ffc366;
-      box-shadow: 0 0 4px rgba(240,148,28,0.6);
-    }
-    .login .btn {
-      background-color: #F0941C;
-      color: white;
-      font-weight: bold;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .login .btn:hover {
-      background-color: #d77f13;
-      transform: scale(1.05);
-    }
-
-    /* Attendance styles (unchanged) */
-    h3 {
-      text-align: center;
-      margin-bottom: 18px;
-      color: #3246ca;
-      letter-spacing: 1px;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 13px;
-    }
-    input[type="file"] {
-      outline: none;
-      border-radius: 4px;
-      border: 1px dashed #90b4ef;
-      background: #f6faff;
-      color: #3246ca;
-      margin: 0 auto 14px auto;
-      display: block;
-      width: 100%;
-      padding: 8px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fcfdff;
-      box-shadow: 0 1px 4px rgba(140,160,255,0.06);
-      border-radius: 8px;
-      margin: 20px 0;
-      animation: fadein 1s;
-      overflow: hidden;
+      gap: 10px;
     }
     th, td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid #e4eefe;
+      font-size: 13px;
+      padding: 8px;
     }
-    th {
-      background: #eef5ff;
-      color: #4250aa;
-      font-size: 15px;
-      letter-spacing: 1px;
-      font-weight: 700;
+    .container {
+      padding: 20px;
+      margin: 20px auto;
     }
-    tr:hover { background: #e8f6ff60; }
-    .checkbox {
-      accent-color: #5a6efb;
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
+    .login .btn {
+      font-size: 14px;
+      padding: 8px;
     }
-  </style>
+  }
+</style>
 </head>
 <body>
 
-  <div class="top-info-bar">
-    Have any question? 
-    <a href="tel:+916381201292">+91 63812 01292</a>, 
-    <a href="tel:+914222987003">0422-2987003 - 04</a>
-    <a href="mailto:office@skacas.ac.in">office@skacas.ac.in</a>
-  </div>
+<div class="top-info-bar">
+  Have any question? 
+  <a href="tel:+916381201292">+91 63812 01292</a>, 
+  <a href="tel:+914222987003">0422-2987003 - 04</a>
+  <a href="mailto:office@skacas.ac.in">office@skacas.ac.in</a>
+</div>
 
-  <nav class="navbar">
-    <img src="./logo.png" alt="SKACAS Logo" class="logo">
-    <ul>
-      <li>ABOUT US</li>
-      <li>ADMISSION</li>
-      <li>ACADEMICS</li>
-      <li>DEPARTMENTS</li>
-      <li>RESEARCH</li>
-      <li>ACCREDITATION</li>
-      <li>INFRASTRUCTURE</li>
-      <li>CLUBS</li>
-      <li>PLACEMENT</li>
-      <li>LOGIN</li>
-      <li>CONTACT</li>
-    </ul>
-  </nav>
+<nav class="navbar">
+  <img src="./logo.png" alt="SKACAS Logo" class="logo">
+  <ul>
+    <li>ABOUT US</li>
+    <li>ADMISSION</li>
+    <li>ACADEMICS</li>
+    <li>DEPARTMENTS</li>
+    <li>RESEARCH</li>
+    <li>ACCREDITATION</li>
+    <li>INFRASTRUCTURE</li>
+    <li>CLUBS</li>
+    <li>PLACEMENT</li>
+    <li>LOGIN</li>
+    <li>CONTACT</li>
+  </ul>
+</nav>
 
-  <div class="header-banner">
-    EXAMINATION ATTENDANCE SYSTEM
-  </div>
+<div class="header-banner">
+  EXAMINATION ATTENDANCE SYSTEM
+</div>
 
-  <!-- Teacher Login -->
-  <div class="container login" id="login-box">
-    <h2>Teacher Login</h2>
-    <form id="login-form">
-      <div class="form-group">
-        <input type="text" id="username" placeholder="Username" required />
-        <input type="password" id="password" placeholder="Password" required />
-        <button class="btn" type="submit">Login</button>
-      </div>
-    </form>
-  </div>
+<!-- Teacher Login -->
+<div class="container login" id="login-box">
+  <h2>Teacher Login</h2>
+  <form id="login-form">
+    <div class="form-group">
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button class="btn" type="submit">Login</button>
+    </div>
+  </form>
+</div>
 
-  <!-- Attendance Section -->
-  <div class="container attendance-sec" style="display: none;" id="main-box">
-    <h3>Exam Seating & Attendance</h3>
-    <label for="fileup">Upload Seating Excel file:</label>
-    <input type="file" id="fileup" accept=".xlsx,.xls" />
-    <div id="table-box"></div>
-    <button class="btn" id="submit-attendance" style="display: none; margin-top:10px;">Submit Attendance</button>
-  </div>
+<!-- Attendance Section -->
+<div class="container attendance-sec" style="display: none;" id="main-box">
+  <h3>Exam Seating & Attendance</h3>
+  <label for="fileup">Upload Seating Excel file:</label>
+  <input type="file" id="fileup" accept=".xlsx,.xls" />
+  <div id="table-box" class="table-responsive"></div>
+  <button class="btn" id="submit-attendance" style="display: none; margin-top:10px;">Submit Attendance</button>
+</div>
 
 <script>
 let students = [];
@@ -291,20 +325,22 @@ function renderTable() {
     </tr>`;
   }
   document.getElementById('table-box').innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Student ID</th>
-          <th>Name</th>
-          <th>Hall</th>
-          <th>Seat</th>
-          <th>Present</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${tbody}
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Hall</th>
+            <th>Seat</th>
+            <th>Present</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tbody}
+        </tbody>
+      </table>
+    </div>
   `;
   document.getElementById('submit-attendance').style.display = students.length ? '' : 'none';
 }
@@ -315,7 +351,7 @@ window.toggleAttendance = function(studentID) {
 
 document.getElementById('submit-attendance').onclick = function() {
   const presentStudents = students.filter(s => attendance[s.StudentID]);
-  if(presentStudents.length === 0){
+  if (presentStudents.length === 0) {
     alert('No students marked present!');
     return;
   }
@@ -324,6 +360,7 @@ document.getElementById('submit-attendance').onclick = function() {
   );
 };
 </script>
+
 <br>
 <marquee><footer>@ll rights reserved by karthikeyan E</footer></marquee>
 </body>
