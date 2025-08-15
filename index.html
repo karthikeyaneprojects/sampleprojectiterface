@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Examination Attendance</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+    }
+
+    /* Top info bar */
+    .top-info-bar {
+      background-color: #F0941C;
+      color: white;
+      padding: 8px 20px;
+      font-size: 14px;
+    }
+    .top-info-bar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 10px;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: #0E2A66;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+    }
+    .navbar .logo {
+      width: 120px;
+      margin-right: 20px;
+    }
+    .navbar ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 15px;
+    }
+    .navbar ul li {
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      position: relative;
+    }
+    .navbar ul li:hover { color: #F0941C; }
+    .navbar ul li::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 3px;
+      background-color: #F0941C;
+      left: 0;
+      bottom: -5px;
+      transition: width 0.3s ease;
+    }
+    .navbar ul li:hover::after { width: 100%; }
+
+    /* Banner */
+    .header-banner {
+      background-image: url(./skacas.jpeg);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      text-align: center;
+      padding: 60px 20px;
+      color: white;
+      font-size: 30px;
+      font-weight: bold;
+      letter-spacing: 1.05px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+    }
+
+    /* Container base */
+    .container {
+      background: #fff;
+      margin: 40px auto;
+      padding: 30px 24px 32px 24px;
+      border-radius: 14px;
+      box-shadow: 0 8px 36px rgba(45, 50, 80, 0.16);
+      width: 98%;
+      max-width: 480px;
+      animation: fadein 0.8s;
+    }
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(24px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    /* Themed login box */
+    .login {
+      background-color: #0E2A66;
+      color: white;
+      text-align: center;
+    }
+    .login h2 {
+      color: white;
+      margin-bottom: 18px;
+    }
+    .login input[type="text"],
+    .login input[type="password"] {
+      padding: 10px 12px;
+      border: 1.5px solid #F0941C;
+      border-radius: 5px;
+      font-size: 15px;
+      width: 100%;
+    }
+    .login input:focus {
+      outline: none;
+      border-color: #ffc366;
+      box-shadow: 0 0 4px rgba(240,148,28,0.6);
+    }
+    .login .btn {
+      background-color: #F0941C;
+      color: white;
+      font-weight: bold;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .login .btn:hover {
+      background-color: #d77f13;
+      transform: scale(1.05);
+    }
+
+    /* Attendance styles (unchanged) */
+    h3 {
+      text-align: center;
+      margin-bottom: 18px;
+      color: #3246ca;
+      letter-spacing: 1px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+    input[type="file"] {
+      outline: none;
+      border-radius: 4px;
+      border: 1px dashed #90b4ef;
+      background: #f6faff;
+      color: #3246ca;
+      margin: 0 auto 14px auto;
+      display: block;
+      width: 100%;
+      padding: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fcfdff;
+      box-shadow: 0 1px 4px rgba(140,160,255,0.06);
+      border-radius: 8px;
+      margin: 20px 0;
+      animation: fadein 1s;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #e4eefe;
+    }
+    th {
+      background: #eef5ff;
+      color: #4250aa;
+      font-size: 15px;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    tr:hover { background: #e8f6ff60; }
+    .checkbox {
+      accent-color: #5a6efb;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-info-bar">
+    Have any question? 
+    <a href="tel:+916381201292">+91 63812 01292</a>, 
+    <a href="tel:+914222987003">0422-2987003 - 04</a>
+    <a href="mailto:office@skacas.ac.in">office@skacas.ac.in</a>
+  </div>
+
+  <nav class="navbar">
+    <img src="./logo.png" alt="SKACAS Logo" class="logo">
+    <ul>
+      <li>ABOUT US</li>
+      <li>ADMISSION</li>
+      <li>ACADEMICS</li>
+      <li>DEPARTMENTS</li>
+      <li>RESEARCH</li>
+      <li>ACCREDITATION</li>
+      <li>INFRASTRUCTURE</li>
+      <li>CLUBS</li>
+      <li>PLACEMENT</li>
+      <li>LOGIN</li>
+      <li>CONTACT</li>
+    </ul>
+  </nav>
+
+  <div class="header-banner">
+    EXAMINATION ATTENDANCE SYSTEM
+  </div>
+
+  <!-- Teacher Login -->
+  <div class="container login" id="login-box">
+    <h2>Teacher Login</h2>
+    <form id="login-form">
+      <div class="form-group">
+        <input type="text" id="username" placeholder="Username" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button class="btn" type="submit">Login</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Attendance Section -->
+  <div class="container attendance-sec" style="display: none;" id="main-box">
+    <h3>Exam Seating & Attendance</h3>
+    <label for="fileup">Upload Seating Excel file:</label>
+    <input type="file" id="fileup" accept=".xlsx,.xls" />
+    <div id="table-box"></div>
+    <button class="btn" id="submit-attendance" style="display: none; margin-top:10px;">Submit Attendance</button>
+  </div>
+
+<script>
+let students = [];
+let attendance = {};
+
+document.getElementById('login-form').onsubmit = function(e) {
+  e.preventDefault();
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value.trim();
+  if (u.length && p.length) {
+    document.getElementById('login-box').style.display = "none";
+    document.getElementById('main-box').style.display = "";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    alert('Please enter username and password.');
+  }
+};
+
+document.getElementById('fileup').onchange = function(evt) {
+  const file = evt.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const ws = workbook.Sheets[workbook.SheetNames[0]];
+    students = XLSX.utils.sheet_to_json(ws);
+    if (!students.length) {
+      alert('Your Excel sheet appears empty or the columns are not recognized.');
+      return;
+    }
+    renderTable();
+  };
+  reader.readAsArrayBuffer(file);
+};
+
+function renderTable() {
+  attendance = {};
+  let tbody = '';
+  for (let stu of students) {
+    const sid = stu.StudentID || "";
+    const name = stu.Name || "";
+    const hall = stu.Hall || "";
+    const seat = stu.Seat || "";
+    attendance[sid] = true;
+    tbody += `<tr>
+      <td>${sid}</td>
+      <td>${name}</td>
+      <td>${hall}</td>
+      <td>${seat}</td>
+      <td><input type="checkbox" class="checkbox" id="chk_${sid}" onchange="toggleAttendance('${sid}')" checked></td>
+    </tr>`;
+  }
+  document.getElementById('table-box').innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Name</th>
+          <th>Hall</th>
+          <th>Seat</th>
+          <th>Present</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${tbody}
+      </tbody>
+    </table>
+  `;
+  document.getElementById('submit-attendance').style.display = students.length ? '' : 'none';
+}
+
+window.toggleAttendance = function(studentID) {
+  attendance[studentID] = !attendance[studentID];
+};
+
+document.getElementById('submit-attendance').onclick = function() {
+  const presentStudents = students.filter(s => attendance[s.StudentID]);
+  if(presentStudents.length === 0){
+    alert('No students marked present!');
+    return;
+  }
+  alert(`Attendance marked for ${presentStudents.length} student(s):\n` +
+    presentStudents.map(s => s.Name).join(', ')
+  );
+};
+</script>
+<br>
+<marquee><footer>@ll rights reserved by karthikeyan E</footer></marquee>
+</body>
+</html>
